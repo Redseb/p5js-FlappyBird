@@ -5,6 +5,7 @@ let player1;
 let topPipe;
 let bottomPipe;
 
+//Default BG color
 let backgroundColorRed = 255;
 let backgroundColorBlue = 200;
 let backgroundColorGreen = 150;
@@ -13,10 +14,12 @@ let score = 0;
 
 function setup(){
     createCanvas(screenWidth,screenHeight);
+    //Create objects
     player1 = new Player();
     /* Top and bottom pipe are separated, speeds are the same, initial x positions are same */
     bottomPipe = new Pipe(600,400);
     topPipe = new Pipe(600, -250);
+    //No stroke makes the game's shapes have no outlines
     noStroke();
 }
 
@@ -35,6 +38,7 @@ function draw(){
     bottomPipe.display();
     bottomPipe.move(yOffset);
 
+    //Create a white box and text to display the score in the bottom left corner
     let scoreText = "Score: " + score;
     textSize(16);
     fill(255);
@@ -42,84 +46,16 @@ function draw(){
     fill(0);
     text(scoreText, 10,  screenHeight -10);
 
+    //Determine if the player has collided with a pipe
     let collideTop = circleRectCollide(player1.x, player1.y, player1.width, topPipe.x, topPipe.y, topPipe.width, topPipe.height);
     let collideBottom = circleRectCollide(player1.x, player1.y, player1.width, bottomPipe.x, bottomPipe.y, bottomPipe.width, bottomPipe.height);
 
+    //If the player collides with pipe reset score and change background color randomly
     if(collideTop || collideBottom){
         score = -100;
         backgroundColorRed = Math.floor(Math.random() * (+120 - + 0)) + +0;
         backgroundColorGreen = Math.floor(Math.random() * (+120 - + 0)) + +0;
         backgroundColorBlue = Math.floor(Math.random() * (+120 - + 0)) + +0;
-    }
-}
-
-class Player{
-    constructor(){
-        this.x = 50;
-        this.y = screenHeight/2;
-        this.height = 50;
-        this.width = 50;
-
-        this.speed = 5; //Movement speed
-        this.initGravity = 0.25;
-        this.currGravity = 0.25;
-    }
-
-    move(){
-        if(keyIsPressed == true){
-            if(key == 'w'){ //Move left
-                this.y -= this.speed;
-                this.currGravity = this.initGravity; //Reset gravity
-            }
-        }
-
-            this.currGravity = this.currGravity + this.initGravity; //Increase gravity (linearly...)
-            this.y += this.currGravity; //Apply gravity
-
-            if (this.y < -70){
-                this.y = -30;
-            } else if(this.y > screenHeight + 50){
-                this.y = screenHeight/2;
-                score = 0;
-                this.currGravity = this.initGravity; //Reset gravity
-            }
-    }
-
-    display(){
-        fill(200,0,230);
-        ellipse(this.x, this.y, this.height, this.width);
-    }
-
-    getx(){
-        return this.x;
-    }
-}
-
-class Pipe{
-    constructor(x,y){
-        this.x = x;
-        this.initX = x;
-        this.y = y;
-        this.initY = y;
-        this.height = screenHeight;
-        this.width = 50;
-
-        this.speed = 5;
-    }
-
-    move(yOffset){
-        if(this.x < 0 - this.width){ //If the pipe goes off screen move it back to original position
-            this.x = this.initX;
-            this.y = this.initY + yOffset;
-            score += 50; //50 per pipe so 100 per gap
-        }
-
-        this.x -= this.speed; //Move pipe left
-    }
-
-    display(){
-        fill(0,255,0);
-        rect(this.x, this.y, this.width, this.height);
     }
 }
 
@@ -151,5 +87,4 @@ function circleRectCollide(cx, cy, cd, rx, ry, rw, rh){
     let dx=distX-rect.w/2;
     let dy=distY-rect.h/2;
     return (dx*dx+dy*dy<=(cr*cr));
-
 }
